@@ -1,0 +1,30 @@
+name: WordPress CVE Hunt Configuration
+queries:
+  - uses: security-extended
+  - uses: security-and-quality
+  - uses: codeql/php-queries:main/Security
+  - uses: codeql/javascript-queries:main/Security
+
+paths:
+  - wp-admin/          # 后台管理功能（权限相关漏洞高发）
+  - wp-includes/       # 核心函数库（基础组件漏洞）
+  - wp-content/themes/ # 主题代码（前端交互漏洞）
+  - wp-content/plugins/ # 插件代码（第三方组件漏洞）
+  - index.php          # 入口文件
+  - wp-blog-header.php
+  - wp-config-sample.php
+
+paths-ignore:
+  - wp-includes/ID3/          # 第三方库（单独维护安全）
+  - wp-includes/PHPMailer/
+  - wp-includes/Requests/
+  - wp-includes/SimplePie/
+  - wp-includes/sodium_compat/ # 加密库（已审计）
+  - "**/node_modules/"         # 前端依赖（单独扫描npm audit）
+  - "**/vendor/"
+  - "**/*.min.js"              # 压缩文件（避免重复分析）
+  - "**/*.min.css"
+
+exclude-paths:
+  - wp-admin/install.php       # 安装文件（非运行时）
+  - wp-admin/upgrade.php
